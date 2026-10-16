@@ -1,0 +1,399 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="chat-page">
+
+    <div class="chat-box">
+
+        <!-- =========================
+             HEADER
+        ========================== -->
+
+        <div class="chat-header">
+
+            <div class="chat-title">
+
+                <div class="ai-icon">
+                    🤖
+                </div>
+
+                <div>
+                    <h1>AI Study Assistant</h1>
+
+                    <p>
+                        Ask questions and study smarter with AI.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="online-status">
+                <span></span>
+                AI Online
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             FLASH MESSAGES
+        ========================== -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                <div class="flash-container">
+
+                    {% for category, message in messages %}
+
+                        <div class="alert {{ category }}">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- =========================
+             CHAT HISTORY
+        ========================== -->
+
+        <div class="chat-history" id="chatHistory">
+
+            {% if chat_history %}
+
+                {% for chat in chat_history %}
+
+                    <!-- =========================
+                         USER QUESTION
+                    ========================= -->
+
+                    <div class="message-row user-row">
+
+                        <div class="message user-message">
+
+                            <div class="message-label">
+                                You
+                            </div>
+
+                            <div class="message-text">
+                                {{ chat[1] }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================
+                         AI ANSWER
+                    ========================= -->
+
+                    <div class="message-row bot-row">
+
+                        <div class="message bot-message">
+
+                            <div class="message-label">
+
+                                <span class="bot-avatar">
+                                    🤖
+                                </span>
+
+                                AI Study Assistant
+
+                            </div>
+
+                            <div class="message-text ai-answer">
+
+                                {{ chat[2] | safe }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <!-- =========================
+                     WELCOME MESSAGE
+                ========================== -->
+
+                <div class="message-row bot-row">
+
+                    <div class="message bot-message welcome-message">
+
+                        <div class="message-label">
+
+                            <span class="bot-avatar">
+                                🤖
+                            </span>
+
+                            AI Study Assistant
+
+                        </div>
+
+                        <div class="message-text">
+
+                            <h3>
+                                Hello! 👋
+                            </h3>
+
+                            <p>
+                                I'm your AI Study Assistant.
+                            </p>
+
+                            <p>
+                                Select a PDF below and ask me
+                                anything about your study material.
+                            </p>
+
+                            <div class="suggestion-box">
+
+                                <div>
+                                    💡 Ask me to explain a topic
+                                </div>
+
+                                <div>
+                                    📚 Ask for important points
+                                </div>
+
+                                <div>
+                                    📝 Ask for a summary
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =========================
+             CHAT FORM
+        ========================== -->
+
+        <form
+            method="POST"
+            action="/ai-chat"
+            class="chat-form"
+        >
+
+            <!-- =========================
+                 PDF SELECTOR
+            ========================== -->
+
+            <div class="pdf-selector">
+
+                <label for="pdf_id">
+                    📄 Study Material
+                </label>
+
+                <select
+                    name="pdf_id"
+                    id="pdf_id"
+                >
+
+                    <option value="">
+                        No PDF — General AI Chat
+                    </option>
+
+                    {% for pdf in pdfs %}
+
+                        <option
+                            value="{{ pdf[0] }}"
+
+                            {% if selected_pdf|string == pdf[0]|string %}
+                                selected
+                            {% endif %}
+                        >
+
+                            📄 {{ pdf[1] }}
+
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- =========================
+                 INPUT AREA
+            ========================== -->
+
+            <div class="chat-input-area">
+
+                <textarea
+                    name="question"
+                    id="questionInput"
+                    placeholder="Ask anything about your PDF..."
+                    autocomplete="off"
+                    required
+                    rows="1"
+                ></textarea>
+
+                <button
+                    type="submit"
+                    id="sendButton"
+                >
+
+                    <span>
+                        Send
+                    </span>
+
+                    🚀
+
+                </button>
+
+            </div>
+
+
+            <div class="input-hint">
+                📚 Select a PDF for document-based answers,
+                or chat without a PDF for general questions.
+            </div>
+
+        </form>
+
+
+        <!-- =========================
+             BACK BUTTON
+        ========================== -->
+
+        <div class="chat-footer">
+
+            <a
+                href="/dashboard"
+                class="back-dashboard-btn"
+            >
+                ← Back to Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+    const chatHistory =
+        document.getElementById("chatHistory");
+
+    const questionInput =
+        document.getElementById("questionInput");
+
+    const sendButton =
+        document.getElementById("sendButton");
+
+    const chatForm =
+        document.querySelector(".chat-form");
+
+
+    /* =========================
+       Scroll Chat To Bottom
+    ========================= */
+
+    function scrollChatToBottom() {
+
+        if (chatHistory) {
+
+            chatHistory.scrollTop =
+                chatHistory.scrollHeight;
+
+        }
+
+    }
+
+
+    window.addEventListener(
+        "load",
+        scrollChatToBottom
+    );
+
+
+    /* =========================
+       Enter Key Submit
+    ========================= */
+
+    if (questionInput) {
+
+        questionInput.addEventListener(
+            "keydown",
+            function(event) {
+
+                if (
+                    event.key === "Enter" &&
+                    !event.shiftKey
+                ) {
+
+                    event.preventDefault();
+
+                    if (
+                        questionInput.value.trim() !== ""
+                    ) {
+
+                        chatForm.requestSubmit();
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================
+       Loading State
+    ========================= */
+
+    if (chatForm) {
+
+        chatForm.addEventListener(
+            "submit",
+            function() {
+
+                if (
+                    questionInput.value.trim() !== ""
+                ) {
+
+                    sendButton.disabled = true;
+
+                    sendButton.innerHTML =
+                        "Thinking... ⏳";
+
+                }
+
+            }
+        );
+
+    }
+
+</script>
+
+
+{% endblock %}

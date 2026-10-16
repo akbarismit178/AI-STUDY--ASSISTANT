@@ -1,0 +1,2082 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="materials-page">
+
+    <div class="materials-container">
+
+
+        <!-- =====================================================
+             HEADER
+             ===================================================== -->
+
+        <div class="materials-header">
+
+            <div>
+
+                <div class="page-title-row">
+
+                    <div class="page-icon">
+                        📚
+                    </div>
+
+                    <div>
+
+                        <h1>
+                            Study Materials
+                        </h1>
+
+                        <p>
+                            Manage your study materials, uploaded PDFs
+                            and online learning resources.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <a
+                href="/dashboard"
+                class="back-dashboard-btn"
+            >
+                ← Back to Dashboard
+            </a>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             FLASH MESSAGES
+             ===================================================== -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                <div class="flash-container">
+
+                    {% for category, message in messages %}
+
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+
+
+        <!-- =====================================================
+             STUDY MATERIAL OVERVIEW
+             ===================================================== -->
+
+        <div class="material-overview">
+
+            <div class="overview-card">
+
+                <div class="overview-icon">
+                    📚
+                </div>
+
+                <div>
+
+                    <span>
+                        My Study Materials
+                    </span>
+
+                    <strong>
+                        {{ material_count }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="overview-card">
+
+                <div class="overview-icon">
+                    📄
+                </div>
+
+                <div>
+
+                    <span>
+                        Uploaded PDFs
+                    </span>
+
+                    <strong>
+                        {{ pdfs|length }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="overview-card">
+
+                <div class="overview-icon">
+                    🌐
+                </div>
+
+                <div>
+
+                    <span>
+                        Online Resources
+                    </span>
+
+                    <strong>
+                        {{ online_materials|length }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        
+        <!-- =====================================================
+             ONLINE STUDY MATERIAL
+             ===================================================== -->
+
+        <div class="online-material-box">
+
+            <div class="box-heading">
+
+                <div class="box-icon">
+                    🌐
+                </div>
+
+                <div>
+
+                    <h2>
+                        Find Online Study Material
+                    </h2>
+
+                    <p>
+                        Search topics and find online learning resources.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form
+                method="GET"
+                action="/materials"
+                class="online-search-form"
+            >
+
+                <div class="online-input-wrapper">
+
+                    <span>
+                        🔎
+                    </span>
+
+                    <input
+                        type="text"
+                        name="online"
+                        value="{{ online_query }}"
+                        placeholder="Search a topic, subject or concept..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <button type="submit">
+                    🔍 Search
+                </button>
+
+            </form>
+
+
+            <!-- Example Topics -->
+
+            <div class="example-topics">
+
+                <span>
+                    Try:
+                </span>
+
+                <a href="/materials?online=Python">
+                    Python
+                </a>
+
+                <a href="/materials?online=Machine Learning">
+                    Machine Learning
+                </a>
+
+                <a href="/materials?online=Database">
+                    Database
+                </a>
+
+                <a href="/materials?online=Operating System">
+                    Operating System
+                </a>
+
+                <a href="/materials?online=HTML CSS">
+                    HTML & CSS
+                </a>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             ONLINE RESULTS
+             ===================================================== -->
+
+        {% if online_query %}
+
+            <div class="section-block online-results">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            🌐 Online Results
+                        </h2>
+
+                        <p>
+                            Results for:
+                            <strong>
+                                {{ online_query }}
+                            </strong>
+                        </p>
+
+                    </div>
+
+
+                    <div class="count-badge">
+                        {{ online_materials|length }} Results
+                    </div>
+
+                </div>
+
+
+                {% if online_materials %}
+
+                    <div class="materials-grid">
+
+                        {% for material in online_materials %}
+
+                            <div class="material-card online-card">
+
+                                <div class="material-icon online-icon">
+                                    🌐
+                                </div>
+
+
+                                <div class="material-info">
+
+                                    <h3>
+                                        {{ material.title }}
+                                    </h3>
+
+
+                                    <p>
+                                        {{ material.description }}
+                                    </p>
+
+
+                                    <div class="material-actions">
+
+                                        <a
+                                            href="{{ material.url }}"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="material-btn online-btn"
+                                        >
+                                            📖 Open Resource
+                                        </a>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="empty-materials">
+
+                        <div class="empty-icon">
+                            🔍
+                        </div>
+
+                        <h2>
+                            No Online Results Found
+                        </h2>
+
+                        <p>
+                            Try searching with another topic or keyword.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+        <!-- =====================================================
+             ADD STUDY MATERIAL
+             ===================================================== -->
+
+        <div class="add-material-box">
+
+            <div class="box-heading">
+
+                <div class="box-icon">
+                    ➕
+                </div>
+
+                <div>
+
+                    <h2>
+                        Add Study Material
+                    </h2>
+
+                    <p>
+                        Upload a file directly from your device.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form
+                method="POST"
+                action="/materials/add"
+                enctype="multipart/form-data"
+                class="add-material-form"
+            >
+
+                <div class="form-group">
+
+                    <label for="title">
+                        Material Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        placeholder="Enter material title"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <input
+                        type="text"
+                        id="description"
+                        name="description"
+                        placeholder="Short description"
+                    >
+
+                </div>
+
+
+                <div class="form-group file-group">
+
+                    <label for="material_file">
+                        Choose File
+                    </label>
+
+                    <input
+                        type="file"
+                        id="material_file"
+                        name="material_file"
+                        accept=".pdf,.doc,.docx,.ppt,.pptx,.txt"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="add-material-btn"
+                >
+                    <span>📚 Add Material</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+
+            </form>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             MY STUDY MATERIALS
+             ===================================================== -->
+
+        <div class="section-block">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        📚 My Study Materials
+                    </h2>
+
+                    <p>
+                        Materials you have added for studying.
+                    </p>
+
+                </div>
+
+
+                <div class="count-badge">
+                    {{ material_count }} Materials
+                </div>
+
+            </div>
+
+
+            {% if saved_materials %}
+
+                <div class="materials-grid">
+
+                    {% for material in saved_materials %}
+
+                        <div class="material-card saved-card">
+
+                            <div class="material-icon saved-icon">
+                                📚
+                            </div>
+
+
+                            <div class="material-info">
+
+                                <h3>
+                                    {{ material[1] }}
+                                </h3>
+
+
+                                {% if material[2] %}
+
+                                    <p>
+                                        {{ material[2] }}
+                                    </p>
+
+                                {% else %}
+
+                                    <p>
+                                        Your saved study material.
+                                    </p>
+
+                                {% endif %}
+
+
+                                <small>
+                                    📅 Added:
+                                    {{ material[5] }}
+                                </small>
+
+
+                                <div class="material-actions">
+
+                                    <a
+                                        href="{% if material[4] %}/view-pdf/{{ material[4] }}{% elif material[3].startswith('static/') %}{{ url_for('static', filename=material[3].replace('static/', '')) }}{% else %}{{ material[3] }}{% endif %}"
+                                        target="_blank"
+                                        class="material-btn study-btn"
+                                    >
+                                        📖 Open
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-materials">
+
+                    <div class="empty-icon">
+                        📚
+                    </div>
+
+                    <h2>
+                        No Study Materials Yet
+                    </h2>
+
+                    <p>
+                        Add a material directly or add one
+                        from your uploaded PDFs below.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+
+        <!-- =====================================================
+             MY UPLOADED PDFs
+             ===================================================== -->
+
+        <div class="section-block">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2>
+                        📄 My Uploaded PDFs
+                    </h2>
+
+                    <p>
+                        Add your existing PDFs to Study Materials.
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="/upload-pdf"
+                    class="secondary-action-btn"
+                >
+                    📄 Upload PDF
+                </a>
+
+            </div>
+
+
+            <!-- PDF SEARCH -->
+
+            <div class="materials-search">
+
+                <span class="search-icon">
+                    🔍
+                </span>
+
+                <input
+                    type="text"
+                    id="materialSearch"
+                    placeholder="Search your uploaded PDFs..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div
+                class="materials-grid"
+                id="materialsGrid"
+            >
+
+                {% if pdfs %}
+
+                    {% for pdf in pdfs %}
+
+                        <div
+                            class="material-card uploaded-card"
+                            data-name="{{ pdf[1]|lower }}"
+                        >
+
+                            <div class="material-icon">
+                                📄
+                            </div>
+
+
+                            <div class="material-info">
+
+                                <h3>
+                                    {{ pdf[1] }}
+                                </h3>
+
+
+                                <p>
+                                    Your uploaded PDF.
+                                </p>
+
+
+                                <small>
+                                    📅 Uploaded:
+                                    {{ pdf[2] }}
+                                </small>
+
+
+                                <div class="material-actions">
+
+                                    <a
+                                        href="/view-pdf/{{ pdf[0] }}"
+                                        target="_blank"
+                                        class="material-btn study-btn"
+                                    >
+                                        📖 Read
+                                    </a>
+
+
+                                    <a
+                                        href="/ai-chat?pdf={{ pdf[0] }}"
+                                        class="material-btn ai-btn"
+                                    >
+                                        🤖 Ask AI
+                                    </a>
+
+
+                                    <a
+                                        href="/quiz?pdf={{ pdf[0] }}"
+                                        class="material-btn quiz-btn"
+                                    >
+                                        📝 Quiz
+                                    </a>
+
+
+                                    <form
+                                        method="POST"
+                                        action="/materials/add-pdf/{{ pdf[0] }}"
+                                        class="inline-form"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="material-btn add-pdf-btn"
+                                        >
+                                            📚 Add to Materials
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="empty-materials">
+
+                        <div class="empty-icon">
+                            📄
+                        </div>
+
+                        <h2>
+                            No Uploaded PDFs
+                        </h2>
+
+                        <p>
+                            Upload a PDF first and then add it
+                            to your Study Materials.
+                        </p>
+
+
+                        <a
+                            href="/upload-pdf"
+                            class="secondary-action-btn"
+                        >
+                            📄 Upload PDF
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- SEARCH EMPTY -->
+
+            <div
+                id="noResults"
+                class="no-results"
+                style="display:none;"
+            >
+
+                <div class="empty-icon">
+                    🔍
+                </div>
+
+                <h3>
+                    No PDFs Found
+                </h3>
+
+                <p>
+                    Try searching with a different PDF name.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     SEARCH SCRIPT
+     ===================================================== -->
+
+<script>
+
+const searchInput =
+    document.getElementById("materialSearch");
+
+const materialCards =
+    document.querySelectorAll(".uploaded-card");
+
+const noResults =
+    document.getElementById("noResults");
+
+
+if (searchInput) {
+
+    searchInput.addEventListener(
+        "input",
+        function () {
+
+            const searchText =
+                this.value
+                .toLowerCase()
+                .trim();
+
+
+            let visibleCards = 0;
+
+
+            materialCards.forEach(
+                function (card) {
+
+                    const name =
+                        card.dataset.name || "";
+
+
+                    if (
+                        name.includes(searchText)
+                    ) {
+
+                        card.style.display = "";
+
+                        visibleCards++;
+
+                    } else {
+
+                        card.style.display = "none";
+
+                    }
+
+                }
+            );
+
+
+            if (
+                noResults &&
+                materialCards.length > 0
+            ) {
+
+                noResults.style.display =
+                    visibleCards === 0
+                        ? "block"
+                        : "none";
+
+            }
+
+        }
+    );
+
+}
+
+</script>
+
+
+
+<!-- =====================================================
+     CSS
+     ===================================================== -->
+
+<style>
+
+/* =====================================================
+   PAGE
+   ===================================================== */
+
+.materials-page {
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    padding: 35px 0 60px;
+
+    background: #f5f8fc;
+
+}
+
+
+.materials-container {
+
+    width: 94%;
+
+    max-width: 1200px;
+
+    margin: auto;
+
+}
+
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+
+.materials-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+
+    margin-bottom: 30px;
+
+}
+
+
+.page-title-row {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+}
+
+
+.page-icon {
+
+    width: 60px;
+
+    height: 60px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eaf1ff;
+
+    border-radius: 16px;
+
+    font-size: 30px;
+
+}
+
+
+.materials-header h1 {
+
+    margin: 0 0 7px;
+
+    color: #123f84;
+
+    font-size: 32px;
+
+    font-weight: 800;
+
+}
+
+
+.materials-header p {
+
+    margin: 0;
+
+    color: #68768a;
+
+    font-size: 15px;
+
+}
+
+
+.back-dashboard-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 12px 18px;
+
+    border-radius: 10px;
+
+    background: #12499b;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+    transition: all 0.25s ease;
+
+}
+
+
+.back-dashboard-btn:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 18px rgba(18, 73, 155, 0.25);
+
+}
+
+
+/* =====================================================
+   FLASH
+   ===================================================== */
+
+.flash-container {
+
+    margin-bottom: 20px;
+
+}
+
+
+.flash-message {
+
+    padding: 13px 16px;
+
+    margin-bottom: 10px;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+.flash-message.success {
+
+    background: #dff5e8;
+
+    color: #176b3a;
+
+}
+
+
+.flash-message.danger {
+
+    background: #fde3e5;
+
+    color: #9d2028;
+
+}
+
+
+.flash-message.warning {
+
+    background: #fff2cc;
+
+    color: #856404;
+
+}
+
+
+/* =====================================================
+   OVERVIEW
+   ===================================================== */
+
+.material-overview {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 28px;
+
+}
+
+
+.overview-card {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 20px;
+
+    background: white;
+
+    border: 1px solid #e3eaf3;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 5px 18px rgba(18, 50, 90, 0.06);
+
+}
+
+
+.overview-icon {
+
+    width: 50px;
+
+    height: 50px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eef4ff;
+
+    border-radius: 13px;
+
+    font-size: 25px;
+
+}
+
+
+.overview-card span {
+
+    display: block;
+
+    color: #718096;
+
+    font-size: 13px;
+
+    margin-bottom: 5px;
+
+}
+
+
+.overview-card strong {
+
+    display: block;
+
+    color: #123f84;
+
+    font-size: 25px;
+
+}
+
+
+/* =====================================================
+   BOX
+   ===================================================== */
+
+.add-material-box,
+.online-material-box {
+
+    background: white;
+
+    border: 1px solid #e1e8f2;
+
+    border-radius: 18px;
+
+    padding: 25px;
+
+    margin-bottom: 30px;
+
+    box-shadow:
+        0 6px 20px rgba(18, 50, 90, 0.06);
+
+}
+
+
+.box-heading {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 22px;
+
+}
+
+
+.box-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eef4ff;
+
+    border-radius: 12px;
+
+    font-size: 23px;
+
+}
+
+
+.box-heading h2 {
+
+    margin: 0 0 5px;
+
+    color: #183b69;
+
+    font-size: 21px;
+
+}
+
+
+.box-heading p {
+
+    margin: 0;
+
+    color: #748198;
+
+    font-size: 14px;
+
+}
+
+
+/* =====================================================
+   ADD FORM
+   ===================================================== */
+
+.add-material-form {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 18px;
+
+}
+
+
+.form-group {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+}
+
+
+.form-group label {
+
+    color: #34445a;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+}
+
+
+.form-group input {
+
+    width: 100%;
+
+    height: 50px;
+
+    box-sizing: border-box;
+
+    padding: 0 14px;
+
+    border: 1px solid #d3dce9;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    background: #fbfdff;
+
+    font-size: 15px;
+
+    transition: all 0.25s ease;
+
+}
+
+
+.form-group input:focus {
+
+    border-color: #12499b;
+
+    background: white;
+
+    box-shadow:
+        0 0 0 3px rgba(18, 73, 155, 0.10);
+
+}
+
+
+.file-group input {
+
+    padding: 11px;
+
+}
+
+
+.add-material-btn {
+
+    height: 50px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #12499b;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    transition: all 0.25s ease;
+
+}
+
+
+.add-material-btn:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 18px rgba(18, 73, 155, 0.25);
+
+}
+
+
+.btn-arrow {
+
+    font-size: 20px;
+
+    transition: transform 0.25s ease;
+
+}
+
+
+.add-material-btn:hover .btn-arrow {
+
+    transform: translateX(4px);
+
+}
+
+
+/* =====================================================
+   SECTION
+   ===================================================== */
+
+.section-block {
+
+    background: white;
+
+    border: 1px solid #e1e8f2;
+
+    border-radius: 18px;
+
+    padding: 25px;
+
+    margin-bottom: 30px;
+
+    box-shadow:
+        0 6px 20px rgba(18, 50, 90, 0.05);
+
+}
+
+
+.section-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 22px;
+
+}
+
+
+.section-header h2 {
+
+    margin: 0 0 6px;
+
+    color: #183b69;
+
+    font-size: 22px;
+
+}
+
+
+.section-header p {
+
+    margin: 0;
+
+    color: #77849a;
+
+    font-size: 14px;
+
+}
+
+
+.count-badge {
+
+    padding: 8px 13px;
+
+    border-radius: 20px;
+
+    background: #eef4ff;
+
+    color: #12499b;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+}
+
+
+/* =====================================================
+   SEARCH
+   ===================================================== */
+
+.materials-search {
+
+    position: relative;
+
+    margin-bottom: 22px;
+
+}
+
+
+.search-icon {
+
+    position: absolute;
+
+    left: 15px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+}
+
+
+.materials-search input {
+
+    width: 100%;
+
+    height: 48px;
+
+    box-sizing: border-box;
+
+    padding: 0 15px 0 43px;
+
+    border: 1px solid #d5dfeb;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    font-size: 15px;
+
+}
+
+
+.materials-search input:focus {
+
+    border-color: #12499b;
+
+    box-shadow:
+        0 0 0 3px rgba(18, 73, 155, 0.08);
+
+}
+
+
+/* =====================================================
+   GRID
+   ===================================================== */
+
+.materials-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 18px;
+
+}
+
+
+/* =====================================================
+   CARD
+   ===================================================== */
+
+.material-card {
+
+    display: flex;
+
+    gap: 15px;
+
+    padding: 20px;
+
+    background: #fbfdff;
+
+    border: 1px solid #e0e8f2;
+
+    border-radius: 15px;
+
+    transition: all 0.25s ease;
+
+}
+
+
+.material-card:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 10px 22px rgba(18, 50, 90, 0.09);
+
+}
+
+
+.material-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eef4ff;
+
+    border-radius: 12px;
+
+    font-size: 24px;
+
+}
+
+
+.material-info {
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+
+.material-info h3 {
+
+    margin: 0 0 8px;
+
+    color: #183b69;
+
+    font-size: 17px;
+
+    word-break: break-word;
+
+}
+
+
+.material-info p {
+
+    margin: 0 0 9px;
+
+    color: #68778c;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+}
+
+
+.material-info small {
+
+    color: #8995a6;
+
+    font-size: 12px;
+
+}
+
+
+/* =====================================================
+   ACTIONS
+   ===================================================== */
+
+.material-actions {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    margin-top: 15px;
+
+}
+
+
+.inline-form {
+
+    display: inline-flex;
+
+    margin: 0;
+
+}
+
+
+.material-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 38px;
+
+    box-sizing: border-box;
+
+    padding: 8px 12px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+
+}
+
+
+.material-btn:hover {
+
+    transform: translateY(-1px);
+
+}
+
+
+.study-btn {
+
+    background: #174ea6;
+
+    color: white;
+
+}
+
+
+.ai-btn {
+
+    background: #6a1b9a;
+
+    color: white;
+
+}
+
+
+.quiz-btn {
+
+    background: #2e7d32;
+
+    color: white;
+
+}
+
+
+.add-pdf-btn {
+
+    background: #0f766e;
+
+    color: white;
+
+}
+
+
+.online-btn {
+
+    background: #12499b;
+
+    color: white;
+
+}
+
+
+.secondary-action-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 10px 15px;
+
+    border-radius: 9px;
+
+    background: #174ea6;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition: all 0.25s ease;
+
+}
+
+
+.secondary-action-btn:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 16px rgba(23, 78, 166, 0.22);
+
+}
+
+
+/* =====================================================
+   ONLINE SEARCH
+   ===================================================== */
+
+.online-search-form {
+
+    display: flex;
+
+    gap: 10px;
+
+}
+
+
+.online-input-wrapper {
+
+    flex: 1;
+
+    position: relative;
+
+}
+
+
+.online-input-wrapper span {
+
+    position: absolute;
+
+    left: 15px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+}
+
+
+.online-input-wrapper input {
+
+    width: 100%;
+
+    height: 50px;
+
+    box-sizing: border-box;
+
+    padding: 0 15px 0 43px;
+
+    border: 1px solid #d4deeb;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    font-size: 15px;
+
+}
+
+
+.online-input-wrapper input:focus {
+
+    border-color: #12499b;
+
+    box-shadow:
+        0 0 0 3px rgba(18, 73, 155, 0.08);
+
+}
+
+
+.online-search-form button {
+
+    height: 50px;
+
+    padding: 0 22px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #12499b;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: all 0.25s ease;
+
+}
+
+
+.online-search-form button:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 18px rgba(18, 73, 155, 0.25);
+
+}
+
+
+/* =====================================================
+   EXAMPLE TOPICS
+   ===================================================== */
+
+.example-topics {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 15px;
+
+}
+
+
+.example-topics span {
+
+    color: #7b8798;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+}
+
+
+.example-topics a {
+
+    padding: 6px 11px;
+
+    border: 1px solid #d5dfeb;
+
+    border-radius: 20px;
+
+    color: #12499b;
+
+    background: #f8fbff;
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    transition: all 0.2s ease;
+
+}
+
+
+.example-topics a:hover {
+
+    background: #eef4ff;
+
+    border-color: #12499b;
+
+}
+
+
+/* =====================================================
+   EMPTY
+   ===================================================== */
+
+.empty-materials {
+
+    text-align: center;
+
+    padding: 45px 20px;
+
+    border: 1px dashed #ccd7e5;
+
+    border-radius: 14px;
+
+    background: #fbfdff;
+
+}
+
+
+.empty-icon {
+
+    font-size: 42px;
+
+    margin-bottom: 10px;
+
+}
+
+
+.empty-materials h2,
+.empty-materials h3 {
+
+    margin: 0 0 8px;
+
+    color: #183b69;
+
+}
+
+
+.empty-materials p {
+
+    margin: 0 0 20px;
+
+    color: #78869a;
+
+    font-size: 14px;
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+    .materials-page {
+
+        padding: 22px 0 40px;
+
+    }
+
+
+    .materials-container {
+
+        width: 92%;
+
+    }
+
+
+    .materials-header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+
+    .materials-header h1 {
+
+        font-size: 27px;
+
+    }
+
+
+    .back-dashboard-btn {
+
+        width: 100%;
+
+    }
+
+
+    .material-overview {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .add-material-form {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .materials-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .section-header {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+
+    .secondary-action-btn {
+
+        width: 100%;
+
+    }
+
+
+    .online-search-form {
+
+        flex-direction: column;
+
+    }
+
+
+    .online-search-form button {
+
+        width: 100%;
+
+    }
+
+
+    .material-card {
+
+        flex-direction: column;
+
+    }
+
+
+    .material-actions {
+
+        flex-direction: column;
+
+    }
+
+
+    .material-btn {
+
+        width: 100%;
+
+    }
+
+
+    .inline-form {
+
+        width: 100%;
+
+    }
+
+
+    .inline-form .material-btn {
+
+        width: 100%;
+
+    }
+
+
+    .example-topics {
+
+        align-items: flex-start;
+
+    }
+
+}
+
+</style>
+
+{% endblock %}

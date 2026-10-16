@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="hero">
+
+    <div class="left">
+
+        <h1>Learn Smarter with Artificial Intelligence</h1>
+
+        <p>
+            AI Study Assistant helps students learn faster,
+            generate summaries, create quizzes, upload PDFs
+            and get instant AI-powered answers.
+        </p>
+
+        <div class="buttons">
+
+            <!-- Get Started -->
+            <a
+                href="/get-started"
+                class="start-btn"
+            >
+                Get Started
+            </a>
+
+
+            <!-- Learn More -->
+            <a
+                href="/about"
+                class="learn-btn"
+            >
+                Learn More
+            </a>
+
+        </div>
+
+
+        <div class="stats">
+
+            <div class="stat-box">
+
+                <h2>{{ student_count }}</h2>
+
+                <p>
+                    Student
+                </p>
+
+            </div>
+
+
+            <div class="stat-box">
+
+                <h2>{{ material_count }}</h2>
+
+                <p>
+                    Study Materials
+                </p>
+
+            </div>
+
+
+            <div class="stat-box">
+
+                <h2>24/7</h2>
+
+                <p>
+                    AI Supports
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="right">
+
+        <img
+            src="{{ url_for(
+                'static',
+                filename='images/student.png'
+            ) }}"
+            alt="Student"
+        >
+
+    </div>
+
+</div>
+
+{% endblock %}

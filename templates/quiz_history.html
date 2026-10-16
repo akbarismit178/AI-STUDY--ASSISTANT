@@ -1,0 +1,597 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="quiz-history-page">
+
+    <div class="quiz-history-container">
+
+        <!-- =========================
+             HEADER
+        ========================== -->
+
+        <div class="history-header">
+
+            <div>
+
+                <h1>
+                    🏆 Quiz History
+                </h1>
+
+                <p>
+                    Review your previous quiz attempts
+                    and complete question banks.
+                </p>
+
+            </div>
+
+
+            <div class="history-navigation">
+
+                <a
+                    href="/quiz"
+                    class="history-btn"
+                >
+                    📝 AI Quiz
+                </a>
+
+                <a
+                    href="/dashboard"
+                    class="history-btn"
+                >
+                    ← Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             QUIZ LIST
+        ========================== -->
+
+        {% if quizzes %}
+
+            {% for quiz in quizzes %}
+
+                <div class="quiz-history-card">
+
+
+                    <!-- =========================
+                         QUIZ HEADER
+                    ========================== -->
+
+                    <div class="quiz-history-title">
+
+                        <div>
+
+                            <h2>
+                                📝 {{ quiz.title }}
+                            </h2>
+
+                            <p>
+                                📅 {{ quiz.created_at }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =========================
+                         QUIZ STATISTICS
+                    ========================== -->
+
+                    <div class="history-stats">
+
+
+                        <div class="history-stat">
+
+                            <span>
+                                Score
+                            </span>
+
+                            <strong>
+
+                                {{ quiz.score }}
+
+                                /
+
+                                {{ quiz.total_questions }}
+
+                            </strong>
+
+                        </div>
+
+
+                        <div class="history-stat">
+
+                            <span>
+                                Correct
+                            </span>
+
+                            <strong>
+                                {{ quiz.correct_answers }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="history-stat">
+
+                            <span>
+                                Wrong
+                            </span>
+
+                            <strong>
+                                {{ quiz.wrong_answers }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="history-stat">
+
+                            <span>
+                                Percentage
+                            </span>
+
+                            <strong>
+                                {{ quiz.percentage }}%
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- =========================
+                         QUESTION BANK
+                    ========================== -->
+
+                    {% if quiz.questions %}
+
+                        <div class="question-bank">
+
+                            <h3>
+                                📚 Complete Question Bank
+                            </h3>
+
+
+                            {% for q in quiz.questions %}
+
+                                {% set user_answer =
+                                    q.get("user_answer") %}
+
+
+                                {% set correct_answer =
+                                    q.get("answer") %}
+
+
+                                <!-- =========================
+                                     QUESTION CARD
+                                ========================== -->
+
+                                <div
+                                    class="history-question
+                                    {% if user_answer is not none
+                                          and user_answer == correct_answer %}
+                                        question-correct
+                                    {% else %}
+                                        question-wrong
+                                    {% endif %}
+                                    "
+                                >
+
+
+                                    <!-- Question Header -->
+
+                                    <div class="question-top">
+
+                                        <span>
+                                            Question
+                                            {{ loop.index }}
+                                        </span>
+
+
+                                        {% if user_answer is not none
+                                              and user_answer == correct_answer %}
+
+                                            <span
+                                                class="question-status correct-status"
+                                            >
+                                                ✅ Correct
+                                            </span>
+
+                                        {% else %}
+
+                                            <span
+                                                class="question-status wrong-status"
+                                            >
+                                                ❌ Wrong
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    <!-- Question -->
+
+                                    <h4>
+                                        {{ q.question }}
+                                    </h4>
+
+
+                                    <!-- =========================
+                                         OPTIONS
+                                    ========================== -->
+
+                                    <div class="history-options">
+
+                                        {% for option in q.options %}
+
+                                            <div
+                                                class="history-option
+
+                                                {% if loop.index0 == correct_answer %}
+                                                    correct-option
+                                                {% endif %}
+
+                                                {% if user_answer is not none
+                                                      and loop.index0 == user_answer
+                                                      and user_answer != correct_answer %}
+                                                    wrong-option
+                                                {% endif %}
+
+                                                "
+                                            >
+
+                                                <span>
+                                                    {{ loop.index }}.
+                                                    {{ option }}
+                                                </span>
+
+
+                                                <!-- Correct Answer Label -->
+
+                                                {% if loop.index0 == correct_answer %}
+
+                                                    <span
+                                                        class="answer-label correct-label"
+                                                    >
+                                                        ✅ Correct Answer
+                                                    </span>
+
+                                                {% endif %}
+
+
+                                                <!-- User Answer Label -->
+
+                                                {% if user_answer is not none
+                                                      and loop.index0 == user_answer %}
+
+                                                    <span
+                                                        class="answer-label user-label"
+                                                    >
+                                                        👤 Your Answer
+                                                    </span>
+
+                                                {% endif %}
+
+                                            </div>
+
+                                        {% endfor %}
+
+                                    </div>
+
+
+                                    <!-- =========================
+                                         ANSWER SUMMARY
+                                    ========================== -->
+
+                                    <div class="answer-summary">
+
+                                        <p>
+
+                                            <strong>
+                                                Your Answer:
+                                            </strong>
+
+                                            {% if user_answer is not none
+                                                  and user_answer >= 0
+                                                  and user_answer < q.options|length %}
+
+                                                {{ q.options[user_answer] }}
+
+                                            {% else %}
+
+                                                Not Answered
+
+                                            {% endif %}
+
+                                        </p>
+
+
+                                        <p>
+
+                                            <strong>
+                                                Correct Answer:
+                                            </strong>
+
+                                            {% if correct_answer is not none
+                                                  and correct_answer >= 0
+                                                  and correct_answer < q.options|length %}
+
+                                                {{ q.options[correct_answer] }}
+
+                                            {% endif %}
+
+                                        </p>
+
+                                    </div>
+
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="old-quiz-message">
+
+                            📌 Question bank is not available
+                            for this older quiz attempt.
+
+                        </div>
+
+                    {% endif %}
+
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="no-history">
+
+                <h2>
+                    📭 No Quiz History
+                </h2>
+
+                <p>
+                    Generate your first quiz to see it here.
+                </p>
+
+                <a href="/quiz">
+                    📝 Generate Quiz
+                </a>
+
+            </div>
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     PAGE CSS
+========================== -->
+
+<style>
+
+.quiz-history-page {
+    width: 100%;
+    padding: 30px 0;
+}
+
+.quiz-history-container {
+    width: 95%;
+    max-width: 1400px;
+    margin: auto;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.history-header h1 {
+    margin-bottom: 8px;
+}
+
+.history-header p {
+    margin: 0;
+}
+
+.history-navigation {
+    display: flex;
+    gap: 10px;
+}
+
+.history-btn {
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: #174ea6;
+    color: white;
+    font-weight: 600;
+}
+
+.quiz-history-card {
+    margin-bottom: 35px;
+}
+
+.quiz-history-title {
+    margin-bottom: 20px;
+}
+
+.quiz-history-title h2 {
+    margin-bottom: 5px;
+}
+
+.quiz-history-title p {
+    margin: 0;
+}
+
+.history-stats {
+    display: grid;
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 20px;
+
+    margin-bottom: 30px;
+}
+
+.history-stat {
+    text-align: center;
+}
+
+.history-stat span {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.history-stat strong {
+    font-size: 20px;
+}
+
+.question-bank h3 {
+    margin-bottom: 20px;
+}
+
+.history-question {
+    border: 1px solid;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.question-correct {
+    border-color: #20c878;
+}
+
+.question-wrong {
+    border-color: #ff4d5a;
+}
+
+.question-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.correct-status {
+    color: #16a765;
+    font-weight: bold;
+}
+
+.wrong-status {
+    color: #ff3b4d;
+    font-weight: bold;
+}
+
+.history-question h4 {
+    margin-bottom: 15px;
+}
+
+.history-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 10px;
+
+    margin-bottom: 8px;
+
+    border: 1px solid transparent;
+
+    border-radius: 7px;
+}
+
+.correct-option {
+    border-color: #20c878;
+}
+
+.wrong-option {
+    border-color: #ff4d5a;
+}
+
+.answer-label {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.correct-label {
+    color: #16a765;
+}
+
+.user-label {
+    color: #555;
+}
+
+.answer-summary {
+    margin-top: 15px;
+}
+
+.answer-summary p {
+    margin: 5px 0;
+}
+
+.old-quiz-message {
+    padding: 20px;
+    border-radius: 8px;
+    background: #f5f5f5;
+}
+
+.no-history {
+    text-align: center;
+    padding: 50px;
+}
+
+.no-history a {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 18px;
+    background: #174ea6;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+}
+
+
+@media (max-width: 768px) {
+
+    .history-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .history-stats {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .history-option {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+}
+
+</style>
+
+{% endblock %}

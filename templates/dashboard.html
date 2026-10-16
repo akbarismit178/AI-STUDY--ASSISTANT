@@ -1,0 +1,1147 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="dashboard-container">
+
+    <div class="main-content full-width">
+
+
+        <!-- =====================================================
+             FLASH MESSAGES
+        ====================================================== -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="alert {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+
+        <!-- =====================================================
+             WELCOME
+        ====================================================== -->
+
+        <div class="welcome-box">
+
+            <h1>
+                Welcome, {{ session.fullname }} 👋
+            </h1>
+
+            <p>
+                Continue your learning journey with AI Study Assistant.
+            </p>
+
+
+
+            <!-- =================================================
+                 PDF SEARCH
+            ================================================== -->
+
+            <form
+                method="GET"
+                action="/dashboard"
+                class="dashboard-search-form"
+            >
+
+                <div class="search-input-wrapper">
+
+                    <span class="search-icon">
+                        🔍
+                    </span>
+
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ search_query or '' }}"
+                        placeholder="Search your PDFs..."
+                        class="dashboard-search"
+                        autocomplete="off"
+                    >
+
+
+                    {% if search_query %}
+
+                        <a
+                            href="/dashboard"
+                            class="clear-search-btn"
+                            title="Clear search"
+                        >
+                            ✕
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="dashboard-search-btn"
+                >
+                    Search
+                </button>
+
+            </form>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             PDF SEARCH RESULTS
+        ====================================================== -->
+
+        {% if search_query %}
+
+            <div class="search-results-section">
+
+
+                <!-- SEARCH HEADER -->
+
+                <div class="search-results-header">
+
+                    <div>
+
+                        <h2>
+                            🔎 PDF Search Results
+                        </h2>
+
+                        <p>
+                            Results for
+                            <strong>"{{ search_query }}"</strong>
+                        </p>
+
+                    </div>
+
+
+                    <!-- CLEAR SEARCH -->
+
+                    <a
+                        href="/dashboard"
+                        class="clear-search-large"
+                    >
+                        ✕ Clear Search
+                    </a>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     RESULTS FOUND
+                ================================================== -->
+
+                {% if search_results %}
+
+                    <div class="pdf-search-grid">
+
+
+                        {% for result in search_results %}
+
+                            <div class="pdf-search-card">
+
+
+                                <!-- PDF ICON -->
+
+                                <div class="pdf-search-icon">
+                                    📄
+                                </div>
+
+
+
+                                <!-- PDF CONTENT -->
+
+                                <div class="pdf-search-content">
+
+                                    <h3>
+                                        {{ result.title }}
+                                    </h3>
+
+
+                                    {% if result.date %}
+
+                                        <p class="pdf-date">
+                                            📅 {{ result.date }}
+                                        </p>
+
+                                    {% endif %}
+
+                                </div>
+
+
+
+                                <!-- VIEW PDF -->
+
+                                <div class="pdf-search-actions">
+
+                                    <a
+                                        href="{{ url_for('upload.view_pdf', pdf_id=result.id, return_dashboard=1) }}"
+                                        target="_blank"
+                                        class="pdf-view-btn"
+                                    >
+                                        👁️ View PDF
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+
+                    </div>
+
+
+                <!-- =================================================
+                     NO RESULTS
+                ================================================== -->
+
+                {% else %}
+
+                    <div class="no-search-results">
+
+                        <div class="no-search-icon">
+                            📄
+                        </div>
+
+                        <h3>
+                            No PDF Found
+                        </h3>
+
+                        <p>
+                            No PDF matched your search.
+                            Try searching with another PDF name.
+                        </p>
+
+
+                        <a
+                            href="/dashboard"
+                            class="no-result-clear-btn"
+                        >
+                            ← Back to Dashboard
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+
+
+        <!-- =====================================================
+             STATISTICS
+        ====================================================== -->
+
+        <div class="stats-cards">
+
+
+            <!-- PDFs -->
+
+            <div class="stat-card">
+
+                <h2>
+                    {{ total_pdfs }}
+                </h2>
+
+                <p>
+                    Uploaded PDFs
+                </p>
+
+            </div>
+
+
+
+            <!-- AI CHATS -->
+
+            <div class="stat-card">
+
+                <h2>
+                    {{ total_chats }}
+                </h2>
+
+                <p>
+                    AI Chats
+                </p>
+
+            </div>
+
+
+
+            <!-- QUIZZES -->
+
+            <div class="stat-card">
+
+                <h2>
+                    {{ total_quizzes }}
+                </h2>
+
+                <p>
+                    Quizzes
+                </p>
+
+            </div>
+
+
+
+            <!-- STUDY MATERIALS -->
+
+            <div class="stat-card">
+
+                <h2>
+                    {{ total_materials }}
+                </h2>
+
+                <p>
+                    Study Materials
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             FEATURE CARDS
+        ====================================================== -->
+
+        <div class="cards">
+
+
+            <!-- UPLOAD PDF -->
+
+            <a
+                href="/upload-pdf"
+                class="card-link"
+            >
+
+                <div class="card">
+
+                    <h2>
+                        📄
+                    </h2>
+
+                    <h3>
+                        Upload PDF
+                    </h3>
+
+                    <p>
+                        Upload notes, books and documents.
+                    </p>
+
+                </div>
+
+            </a>
+
+
+
+            <!-- AI CHAT -->
+
+            <a
+                href="/ai-chat"
+                class="card-link"
+            >
+
+                <div class="card">
+
+                    <h2>
+                        🤖
+                    </h2>
+
+                    <h3>
+                        AI Chat
+                    </h3>
+
+                    <p>
+                        Ask questions and get instant answers.
+                    </p>
+
+                </div>
+
+            </a>
+
+
+
+            <!-- QUIZ -->
+
+            <a
+                href="/quiz"
+                class="card-link"
+            >
+
+                <div class="card">
+
+                    <h2>
+                        📝
+                    </h2>
+
+                    <h3>
+                        Generate Quiz
+                    </h3>
+
+                    <p>
+                        Create quizzes automatically from PDFs.
+                    </p>
+
+                </div>
+
+            </a>
+
+
+
+            <!-- STUDY MATERIALS -->
+
+            <a
+                href="/materials"
+                class="card-link"
+            >
+
+                <div class="card">
+
+                    <h2>
+                        📚
+                    </h2>
+
+                    <h3>
+                        Study Materials
+                    </h3>
+
+                    <p>
+                        Access all your learning resources.
+                    </p>
+
+                </div>
+
+            </a>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             RECENT UPLOADED PDFs
+        ====================================================== -->
+
+        <div class="recent-section">
+
+            <h2>
+                📄 Recent Uploaded PDFs
+            </h2>
+
+
+            {% if pdfs %}
+
+                {% for pdf in pdfs %}
+
+                    <div class="recent-card">
+
+
+                        <div class="recent-pdf-info">
+
+                            <h3>
+                                {{ pdf[1] }}
+                            </h3>
+
+                            <p>
+                                📅 {{ pdf[2] }}
+                            </p>
+
+                        </div>
+
+
+                        <!-- VIEW PDF -->
+
+                        <a
+                            href="{{ url_for('upload.view_pdf', pdf_id=pdf[0]) }}"
+                            target="_blank"
+                            class="recent-view-btn"
+                        >
+                            👁️ View PDF
+                        </a>
+
+                    </div>
+
+                {% endfor %}
+
+
+            {% else %}
+
+                <p>
+                    No PDF Uploaded Yet.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     SEARCH CSS
+========================================================= -->
+
+<style>
+
+
+/* =========================================================
+   SEARCH FORM
+========================================================= */
+
+.dashboard-search-form {
+
+    display: flex;
+
+    gap: 10px;
+
+    width: 100%;
+
+    margin-top: 20px;
+
+}
+
+
+.search-input-wrapper {
+
+    position: relative;
+
+    flex: 1;
+
+}
+
+
+.search-icon {
+
+    position: absolute;
+
+    left: 15px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    font-size: 16px;
+
+    pointer-events: none;
+
+}
+
+
+.dashboard-search {
+
+    width: 100%;
+
+    height: 48px;
+
+    padding: 0 45px 0 43px;
+
+    border: 1px solid #d9dfe8;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    font-size: 15px;
+
+    box-sizing: border-box;
+
+}
+
+
+.dashboard-search:focus {
+
+    border-color: #12499b;
+
+    box-shadow:
+        0 0 0 3px rgba(18, 73, 155, 0.10);
+
+}
+
+
+.dashboard-search-btn {
+
+    height: 48px;
+
+    padding: 0 22px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #12499b;
+
+    color: white;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.25s ease;
+
+}
+
+
+.dashboard-search-btn:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 6px 16px rgba(18, 73, 155, 0.20);
+
+}
+
+
+
+/* =========================================================
+   SMALL CLEAR X
+========================================================= */
+
+.clear-search-btn {
+
+    position: absolute;
+
+    right: 13px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 27px;
+
+    height: 27px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eef1f5;
+
+    color: #555;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition: 0.2s ease;
+
+}
+
+
+.clear-search-btn:hover {
+
+    background: #dfe4ea;
+
+    color: #222;
+
+}
+
+
+
+/* =========================================================
+   SEARCH RESULTS SECTION
+========================================================= */
+
+.search-results-section {
+
+    margin-top: 30px;
+
+}
+
+
+.search-results-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 18px;
+
+}
+
+
+.search-results-header h2 {
+
+    margin: 0;
+
+    color: #12499b;
+
+}
+
+
+.search-results-header p {
+
+    margin-top: 7px;
+
+    color: #666;
+
+}
+
+
+
+/* =========================================================
+   LARGE CLEAR SEARCH BUTTON
+========================================================= */
+
+/* =========================================================
+   CLEAR SEARCH BLUE BUTTON
+========================================================= */
+
+.clear-search-large {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 44px;
+
+    padding: 0 18px;
+
+    border-radius: 9px;
+
+    background: #12499b;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    border: 1px solid #12499b;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+
+}
+
+
+/* Hover Animation */
+
+.clear-search-large:hover {
+
+    background: #0e3d82;
+
+    color: white;
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 18px rgba(18, 73, 155, 0.28);
+
+}
+
+
+/* Click Animation */
+
+.clear-search-large:active {
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 4px 10px rgba(18, 73, 155, 0.20);
+
+}
+
+
+
+/* =========================================================
+   PDF SEARCH GRID
+========================================================= */
+
+.pdf-search-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(300px, 1fr));
+
+    gap: 18px;
+
+}
+
+
+
+/* =========================================================
+   PDF SEARCH CARD
+========================================================= */
+
+.pdf-search-card {
+
+    background: white;
+
+    border-radius: 15px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.08);
+
+    display: flex;
+
+    flex-direction: column;
+
+    transition: 0.25s ease;
+
+}
+
+
+.pdf-search-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.12);
+
+}
+
+
+
+/* =========================================================
+   PDF ICON
+========================================================= */
+
+.pdf-search-icon {
+
+    width: 58px;
+
+    height: 58px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #eef4ff;
+
+    border-radius: 13px;
+
+    font-size: 29px;
+
+    margin-bottom: 15px;
+
+}
+
+
+
+/* =========================================================
+   PDF CONTENT
+========================================================= */
+
+.pdf-search-content h3 {
+
+    margin: 0;
+
+    color: #12499b;
+
+    font-size: 19px;
+
+    word-break: break-word;
+
+}
+
+
+.pdf-date {
+
+    color: #777;
+
+    font-size: 14px;
+
+    margin-top: 9px;
+
+}
+
+
+
+/* =========================================================
+   VIEW PDF BUTTON
+========================================================= */
+
+.pdf-search-actions {
+
+    margin-top: 18px;
+
+}
+
+
+.pdf-view-btn {
+
+    width: 100%;
+
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: #12499b;
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 9px;
+
+    font-weight: 700;
+
+    transition: 0.25s ease;
+
+    box-sizing: border-box;
+
+}
+
+
+.pdf-view-btn:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 6px 14px rgba(18, 73, 155, 0.25);
+
+}
+
+
+
+/* =========================================================
+   NO SEARCH RESULTS
+========================================================= */
+
+.no-search-results {
+
+    background: white;
+
+    text-align: center;
+
+    padding: 50px 20px;
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.07);
+
+}
+
+
+.no-search-icon {
+
+    font-size: 45px;
+
+    margin-bottom: 10px;
+
+}
+
+
+.no-search-results h3 {
+
+    color: #12499b;
+
+    margin: 0;
+
+}
+
+
+.no-search-results p {
+
+    color: #777;
+
+    margin-bottom: 20px;
+
+}
+
+
+.no-result-clear-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 11px 18px;
+
+    background: #12499b;
+
+    color: white;
+
+    text-decoration: none;
+
+    border-radius: 9px;
+
+    font-weight: 700;
+
+}
+
+
+
+/* =========================================================
+   RECENT PDF CARD
+========================================================= */
+
+.recent-card {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+}
+
+
+.recent-pdf-info {
+
+    min-width: 0;
+
+}
+
+
+.recent-pdf-info h3 {
+
+    word-break: break-word;
+
+}
+
+
+
+/* =========================================================
+   RECENT VIEW BUTTON
+========================================================= */
+
+.recent-view-btn {
+
+    flex-shrink: 0;
+
+    padding: 10px 16px;
+
+    background: #12499b;
+
+    color: white;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    transition: 0.2s ease;
+
+}
+
+
+.recent-view-btn:hover {
+
+    background: #0e3d82;
+
+    transform: translateY(-1px);
+
+}
+
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .clear-search-large {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+
+
+
+    .dashboard-search-btn {
+
+        width: 100%;
+
+    }
+
+
+    .search-results-header {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    .clear-search-large {
+
+        width: 100%;
+
+        box-sizing: border-box;
+
+    }
+
+
+    .pdf-search-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .recent-card {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    .recent-view-btn {
+
+        text-align: center;
+
+    }
+
+}
+
+</style>
+
+{% endblock %}

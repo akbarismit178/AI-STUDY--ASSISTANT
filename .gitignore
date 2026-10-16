@@ -1,0 +1,42 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+env/
+
+# Environment Variables
+.env
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# Upload folder (optional)
+uploads/
+
+# Local SQLite database
+database/study.db
+
+# Windows
+Thumbs.db
+
+# macOS
+.DS_Store
+
+# User-uploaded study materials (private files)
+static/study_materials/
+
+# Flask instance folder
+instance/
+
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Alternative virtual environment names
+.venv/

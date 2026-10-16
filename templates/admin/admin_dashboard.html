@@ -1,0 +1,545 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="admin-container">
+
+
+    <!-- =========================
+         ADMIN HEADER
+    ========================== -->
+
+    <div class="admin-header">
+
+        <div>
+
+            <h1>
+                Admin Dashboard
+            </h1>
+
+            <p>
+                Welcome, {{ session.admin_name }} 👋
+            </p>
+
+        </div>
+
+
+        <a
+            href="/admin-logout"
+            class="admin-logout-btn"
+        >
+            Logout
+        </a>
+
+    </div>
+
+
+    <!-- =========================
+         STATISTICS
+    ========================== -->
+
+    <div class="admin-stats">
+
+
+        <!-- Users -->
+
+        <div class="admin-stat-card">
+
+            <div class="admin-icon">
+                👤
+            </div>
+
+            <h2>
+                {{ total_users }}
+            </h2>
+
+            <p>
+                Total Users
+            </p>
+
+        </div>
+
+
+        <!-- PDFs -->
+
+        <div class="admin-stat-card">
+
+            <div class="admin-icon">
+                📄
+            </div>
+
+            <h2>
+                {{ total_pdfs }}
+            </h2>
+
+            <p>
+                Total PDFs
+            </p>
+
+        </div>
+
+
+        <!-- Chats -->
+
+        <div class="admin-stat-card">
+
+            <div class="admin-icon">
+                🤖
+            </div>
+
+            <h2>
+                {{ total_chats }}
+            </h2>
+
+            <p>
+                AI Chats
+            </p>
+
+        </div>
+
+
+        <!-- Quizzes -->
+
+        <div class="admin-stat-card">
+
+            <div class="admin-icon">
+                📝
+            </div>
+
+            <h2>
+                {{ total_quizzes }}
+            </h2>
+
+            <p>
+                Total Quizzes
+            </p>
+
+        </div>
+
+
+        <!-- Materials -->
+
+        <div class="admin-stat-card">
+
+            <div class="admin-icon">
+                📚
+            </div>
+
+            <h2>
+                {{ total_materials }}
+            </h2>
+
+            <p>
+                Study Materials
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         MANAGEMENT
+    ========================== -->
+
+    <div class="admin-section">
+
+        <h2>
+            Management
+        </h2>
+
+
+        <div class="admin-management">
+
+
+            <a
+                href="/admin/users"
+                class="admin-management-card"
+            >
+
+                <span>
+                    👤
+                </span>
+
+                <h3>
+                    Users
+                </h3>
+
+                <p>
+                    Manage registered users
+                </p>
+
+            </a>
+
+
+            <a
+                href="/admin/pdfs"
+                class="admin-management-card"
+            >
+
+                <span>
+                    📄
+                </span>
+
+                <h3>
+                    PDFs
+                </h3>
+
+                <p>
+                    Manage uploaded PDFs
+                </p>
+
+            </a>
+
+
+            <a
+                href="/admin/chats"
+                class="admin-management-card"
+            >
+
+                <span>
+                    🤖
+                </span>
+
+                <h3>
+                    AI Chats
+                </h3>
+
+                <p>
+                    View chat history
+                </p>
+
+            </a>
+
+
+            <a
+                href="/admin/quizzes"
+                class="admin-management-card"
+            >
+
+                <span>
+                    📝
+                </span>
+
+                <h3>
+                    Quizzes
+                </h3>
+
+                <p>
+                    Manage quiz history
+                </p>
+
+            </a>
+
+
+            <a
+                href="/admin/study-materials"
+                class="admin-management-card"
+            >
+
+                <span>
+                    📚
+                </span>
+
+                <h3>
+                    Study Materials
+                </h3>
+
+                <p>
+                    Manage study materials
+                </p>
+
+            </a>
+
+
+            <a
+                href="/admin/contact-messages"
+                class="admin-management-card"
+            >
+
+                <span>
+                    📩
+                </span>
+
+                <h3>
+                    Contact Messages
+                </h3>
+
+                <p>
+                    View user messages
+                </p>
+
+            </a>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+/* =========================
+   ADMIN CONTAINER
+========================= */
+
+.admin-container {
+
+    max-width: 1200px;
+
+    margin: 40px auto;
+
+    padding: 20px;
+
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.admin-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 30px;
+
+}
+
+
+.admin-header h1 {
+
+    margin: 0;
+
+    color: #12499b;
+
+    font-size: 32px;
+
+}
+
+
+.admin-header p {
+
+    margin-top: 8px;
+
+    color: #666;
+
+}
+
+
+.admin-logout-btn {
+
+    background: #dc3545;
+
+    color: white;
+
+    padding: 12px 22px;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+    transition: 0.3s;
+
+}
+
+
+.admin-logout-btn:hover {
+
+    background: #b02a37;
+
+    transform: translateY(-2px);
+
+}
+
+
+/* =========================
+   STATISTICS
+========================= */
+
+.admin-stats {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 40px;
+
+}
+
+
+.admin-stat-card {
+
+    background: white;
+
+    border-radius: 16px;
+
+    padding: 25px 15px;
+
+    text-align: center;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, 0.08);
+
+    transition: 0.3s;
+
+}
+
+
+.admin-stat-card:hover {
+
+    transform:
+        translateY(-5px);
+
+}
+
+
+.admin-icon {
+
+    font-size: 30px;
+
+    margin-bottom: 10px;
+
+}
+
+
+.admin-stat-card h2 {
+
+    color: #12499b;
+
+    font-size: 30px;
+
+    margin: 5px;
+
+}
+
+
+.admin-stat-card p {
+
+    color: #666;
+
+    margin: 0;
+
+}
+
+
+/* =========================
+   MANAGEMENT
+========================= */
+
+.admin-section h2 {
+
+    color: #12499b;
+
+    margin-bottom: 20px;
+
+}
+
+
+.admin-management {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 20px;
+
+}
+
+
+.admin-management-card {
+
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 16px;
+
+    text-decoration: none;
+
+    color: #222;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, 0.08);
+
+    transition: 0.3s;
+
+}
+
+
+.admin-management-card:hover {
+
+    transform:
+        translateY(-5px);
+
+    box-shadow:
+        0 10px 25px
+        rgba(18, 73, 155, 0.18);
+
+}
+
+
+.admin-management-card span {
+
+    font-size: 35px;
+
+}
+
+
+.admin-management-card h3 {
+
+    color: #12499b;
+
+    margin: 12px 0 5px;
+
+}
+
+
+.admin-management-card p {
+
+    color: #666;
+
+    margin: 0;
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 900px) {
+
+    .admin-stats {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
+    .admin-management {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+
+</style>
+
+{% endblock %}

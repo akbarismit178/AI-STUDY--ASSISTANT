@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="upload-page">
+
+    <div class="upload-card">
+
+        <h1>📄 Upload Your PDF</h1>
+
+        <p>
+            Drag & Drop your PDF here or click the box below.
+        </p>
+
+
+        <!-- ========================= -->
+        <!-- Flash Messages -->
+        <!-- ========================= -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="alert {{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- ========================= -->
+        <!-- Upload Form -->
+        <!-- ========================= -->
+
+        <form
+            action="/upload-pdf"
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <label class="drop-area" for="pdf">
+
+                <img
+                    src="{{ url_for('static', filename='images/pdf.png') }}"
+                    alt="PDF"
+                >
+
+                <h2>Select PDF</h2>
+
+                <p id="file-name">
+                    Click here or Drag & Drop
+                </p>
+
+            </label>
+
+
+            <input
+                type="file"
+                id="pdf"
+                name="pdf"
+                accept=".pdf"
+                required
+                hidden
+            >
+
+
+            <button type="submit">
+                Upload PDF 🚀
+                
+            </button>
+
+
+            <a
+            href="/dashboard"
+            class="dashboard-btn"
+>
+                 ← Back to Dashboard
+            </a>
+
+
+        </form>
+
+
+        <hr>
+
+
+        <!-- ========================= -->
+        <!-- Uploaded PDFs -->
+        <!-- ========================= -->
+
+        <h2>Your Uploaded PDFs</h2>
+
+
+        {% if pdfs %}
+
+            {% for pdf in pdfs %}
+
+                <div class="pdf-card">
+
+                    <h3>
+                        📄 {{ pdf[1] }}
+                    </h3>
+
+                    <p>
+                        📅 {{ pdf[2] }}
+                    </p>
+
+
+                    <!-- ========================= -->
+                    <!-- PDF Buttons -->
+                    <!-- ========================= -->
+
+                    <div class="pdf-buttons">
+
+                        <!-- View -->
+
+                        <a
+                            href="/view-pdf/{{ pdf[0] }}"
+                            target="_blank"
+                            class="view-btn"
+                        >
+                            👁 View
+                        </a>
+
+
+                        <!-- Download -->
+
+                        <a
+                            href="/download-pdf/{{ pdf[0] }}"
+                            class="download-btn"
+                        >
+                            ⬇ Download
+                        </a>
+
+
+                        <!-- AI Chat -->
+
+                        <a
+                            href="/ai-chat?pdf={{ pdf[0] }}"
+                            class="chat-btn"
+                        >
+                            🤖 AI Chat
+                        </a>
+
+
+                        <!-- Quiz -->
+
+                        <a
+                            href="/quiz?pdf={{ pdf[0] }}"
+                            class="quiz-btn"
+                        >
+                            📝 Quiz
+                        </a>
+
+
+                        <!-- Delete -->
+
+                        <a
+                            href="/delete-pdf/{{ pdf[0] }}"
+                            class="delete-btn"
+                            onclick="return confirm('Are you sure you want to delete this PDF?')"
+                        >
+                            🗑 Delete
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+
+        {% else %}
+
+            <p>
+                No PDF Uploaded Yet.
+            </p>
+
+        {% endif %}
+
+
+        <br>
+
+
+        <!-- ========================= -->
+        <!-- Back Dashboard -->
+        <!-- ========================= -->
+
+        
+
+    </div>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- File Name JavaScript -->
+<!-- ========================= -->
+
+<script>
+
+const pdfInput = document.getElementById("pdf");
+
+const fileName = document.getElementById("file-name");
+
+
+pdfInput.addEventListener("change", function () {
+
+    if (this.files.length > 0) {
+
+        fileName.innerHTML =
+            "📄 " + this.files[0].name;
+
+    } else {
+
+        fileName.innerHTML =
+            "Click here or Drag & Drop";
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

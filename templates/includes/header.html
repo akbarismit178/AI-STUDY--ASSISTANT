@@ -1,0 +1,36 @@
+<div class="header">
+
+    <div class="logo">
+
+        <h2>🤖 AI Study Assistant</h2>
+
+    </div>
+
+    <div class="menu">
+
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/features">Features</a>
+        <a href="/contact">Contact</a>
+
+        {% if session.get("user_id") %}
+
+            <a href="/dashboard">Dashboard</a>
+
+            <a href="/logout">Logout</a>
+
+            <span class="user-name">
+                👤 {{ session.fullname }}
+            </span>
+
+        {% else %}
+
+            <a href="/login">Login</a>
+
+            <a href="/register">Register</a>
+
+        {% endif %}
+
+    </div>
+
+</div>

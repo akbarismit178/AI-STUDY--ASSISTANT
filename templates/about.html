@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section class="about-page">
+
+    <div class="about-left">
+
+        <img src="{{ url_for('static', filename='images/about.png') }}" alt="About">
+
+    </div>
+
+    <div class="about-right">
+
+        <h1>About AI Study Assistant</h1>
+
+        <p>
+            AI Study Assistant is an intelligent learning platform
+            designed to help students study smarter using Artificial
+            Intelligence.
+        </p>
+
+        <p>
+            Our platform allows students to upload PDFs, generate
+            quizzes, create summaries and chat with AI anytime.
+        </p>
+
+        <div class="about-list">
+
+            <div>✔ AI Powered Learning</div>
+
+            <div>✔ PDF Analysis</div>
+
+            <div>✔ Smart Quiz Generator</div>
+
+            <div>✔ AI Chat Support</div>
+
+            <div>✔ Instant Summaries</div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section class="mission">
+
+    <h2>Our Mission</h2>
+
+    <div class="mission-boxes">
+
+        <div class="mission-box">
+
+            <h3>🎯 Learn Faster</h3>
+
+            <p>Helping students save study time using AI.</p>
+
+        </div>
+
+        <div class="mission-box">
+
+            <h3>📚 Smart Materials</h3>
+
+            <p>Generate summaries and notes instantly.</p>
+
+        </div>
+
+        <div class="mission-box">
+
+            <h3>🤖 AI Assistant</h3>
+
+            <p>Ask questions anytime and get quick answers.</p>
+
+        </div>
+
+        <div class="mission-box">
+
+            <h3>🚀 Better Results</h3>
+
+            <p>Improve academic performance efficiently.</p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<section class="why">
+
+    <h2>Why Choose Us?</h2>
+
+    <div class="why-boxes">
+
+        <div class="why-box">
+            ⭐ Easy to Use
+        </div>
+
+        <div class="why-box">
+            🔒 Secure Platform
+        </div>
+
+        <div class="why-box">
+            ⚡ Fast Performance
+        </div>
+
+        <div class="why-box">
+            💡 Modern Technology
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

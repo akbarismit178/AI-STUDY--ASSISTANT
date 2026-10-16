@@ -1,0 +1,952 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="quiz-page">
+
+    <div class="quiz-container">
+
+        <!-- =========================
+             HEADER
+        ========================== -->
+
+        <div class="quiz-header">
+
+            <div>
+
+                <h1>📝 AI Quiz</h1>
+
+                <p>
+                    Test your knowledge with AI-generated questions.
+                </p>
+
+            </div>
+
+            <div class="quiz-header-actions">
+
+                <a
+                    href="/quiz-history"
+                    class="quiz-history-btn"
+                >
+                    🏆 Quiz History
+                </a>
+
+                <a
+                    href="/dashboard"
+                    class="quiz-back-btn"
+                >
+                    ← Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             PDF SELECTION
+        ========================== -->
+
+        <div class="quiz-setup">
+
+            <label for="quizPdf">
+                📄 Select Study Material
+            </label>
+
+            <select id="quizPdf">
+
+                <option value="">
+                    Select a PDF
+                </option>
+
+                {% for pdf in pdfs %}
+
+                    <option
+                        value="{{ pdf[0] }}"
+                        {% if selected_pdf|string == pdf[0]|string %}
+                            selected
+                        {% endif %}
+                    >
+                        📄 {{ pdf[1] }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <label for="questionCount">
+                🔢 Number of Questions
+            </label>
+
+            <select id="questionCount">
+
+                <option value="5">
+                    5 Questions
+                </option>
+
+                <option value="10" selected>
+                    10 Questions
+                </option>
+
+                <option value="15">
+                    15 Questions
+                </option>
+
+                <option value="20">
+                    20 Questions
+                </option>
+
+            </select>
+
+
+            <button
+                type="button"
+                id="generateQuizBtn"
+                class="generate-quiz-btn"
+            >
+                🚀 Generate Quiz
+            </button>
+
+        </div>
+
+
+        <!-- =========================
+             LOADING
+        ========================== -->
+
+        <div
+            id="quizLoading"
+            class="quiz-loading"
+            style="display: none;"
+        >
+
+            <div class="loading-icon">
+                🤖
+            </div>
+
+            <h3>
+                Generating your quiz...
+            </h3>
+
+            <p>
+                Please wait a moment.
+            </p>
+
+        </div>
+
+
+        <!-- =========================
+             QUIZ AREA
+        ========================== -->
+
+        <div
+            id="quizArea"
+            class="quiz-area"
+            style="display: none;"
+        >
+
+            <div class="quiz-progress">
+
+                <span id="questionNumber">
+                    Question 1
+                </span>
+
+                <span id="quizScore">
+                    Score: 0
+                </span>
+
+            </div>
+
+
+            <div class="question-card">
+
+                <h2 id="questionText">
+                    Question will appear here.
+                </h2>
+
+
+                <div
+                    id="optionsContainer"
+                    class="quiz-options"
+                >
+                </div>
+
+
+                <button
+                    type="button"
+                    id="nextQuestionBtn"
+                    class="next-question-btn"
+                    style="display: none;"
+                >
+                    Next Question →
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             RESULT
+        ========================== -->
+
+        <div
+            id="quizResult"
+            class="quiz-result"
+            style="display: none;"
+        >
+
+            <div class="result-icon">
+                🎉
+            </div>
+
+            <h2>
+                Quiz Completed!
+            </h2>
+
+            <p>
+                Your Score
+            </p>
+
+            <div
+                id="finalScore"
+                class="final-score"
+            >
+                0 / 0
+            </div>
+
+
+            <!-- =========================
+                 RESULT DETAILS
+            ========================== -->
+
+            <div
+                id="resultDetails"
+                class="result-details"
+            >
+
+                <p>
+                    ✅ Correct:
+                    <strong id="correctAnswers">
+                        0
+                    </strong>
+                </p>
+
+                <p>
+                    ❌ Wrong:
+                    <strong id="wrongAnswers">
+                        0
+                    </strong>
+                </p>
+
+                <p>
+                    📊 Percentage:
+                    <strong id="percentage">
+                        0%
+                    </strong>
+                </p>
+
+            </div>
+
+
+            <div class="quiz-result-actions">
+
+                <button
+                    type="button"
+                    id="restartQuizBtn"
+                    class="restart-quiz-btn"
+                >
+                    🔄 Try Again
+                </button>
+
+                <a
+                    href="/quiz-history"
+                    class="quiz-history-btn"
+                >
+                    🏆 View History
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // =========================
+    // Elements
+    // =========================
+
+    const generateQuizBtn =
+        document.getElementById("generateQuizBtn");
+
+
+    const quizPdf =
+        document.getElementById("quizPdf");
+
+
+    const questionCount =
+        document.getElementById("questionCount");
+
+
+    const quizLoading =
+        document.getElementById("quizLoading");
+
+
+    const quizArea =
+        document.getElementById("quizArea");
+
+
+    const quizResult =
+        document.getElementById("quizResult");
+
+
+    const questionText =
+        document.getElementById("questionText");
+
+
+    const optionsContainer =
+        document.getElementById("optionsContainer");
+
+
+    const questionNumber =
+        document.getElementById("questionNumber");
+
+
+    const quizScore =
+        document.getElementById("quizScore");
+
+
+    const nextQuestionBtn =
+        document.getElementById("nextQuestionBtn");
+
+
+    const finalScore =
+        document.getElementById("finalScore");
+
+
+    const correctAnswers =
+        document.getElementById("correctAnswers");
+
+
+    const wrongAnswers =
+        document.getElementById("wrongAnswers");
+
+
+    const percentage =
+        document.getElementById("percentage");
+
+
+    const restartQuizBtn =
+        document.getElementById("restartQuizBtn");
+
+
+    // =========================
+    // Quiz Variables
+    // =========================
+
+    let questions = [];
+
+    let currentQuestion = 0;
+
+    let score = 0;
+
+    // Store user's selected answer
+    let userAnswers = [];
+
+
+    // =========================
+    // Generate Quiz
+    // =========================
+
+    generateQuizBtn.addEventListener(
+        "click",
+        async function () {
+
+            const pdfId =
+                quizPdf.value;
+
+
+            const count =
+                questionCount.value;
+
+
+            if (!pdfId) {
+
+                alert(
+                    "Please select a PDF first."
+                );
+
+                return;
+
+            }
+
+
+            // =========================
+            // Loading State
+            // =========================
+
+            generateQuizBtn.disabled =
+                true;
+
+            quizLoading.style.display =
+                "block";
+
+            quizArea.style.display =
+                "none";
+
+            quizResult.style.display =
+                "none";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/generate-quiz",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                pdf_id: pdfId,
+                                count: count
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error ||
+                        "Unable to generate quiz."
+                    );
+
+                }
+
+
+                questions =
+                    data.questions || [];
+
+
+                if (!questions.length) {
+
+                    throw new Error(
+                        "No questions were generated."
+                    );
+
+                }
+
+
+                // =========================
+                // Reset Quiz
+                // =========================
+
+                currentQuestion = 0;
+
+                score = 0;
+
+                userAnswers = [];
+
+                quizLoading.style.display =
+                    "none";
+
+
+                quizArea.style.display =
+                    "block";
+
+
+                showQuestion();
+
+
+            } catch (error) {
+
+                quizLoading.style.display =
+                    "none";
+
+
+                alert(
+                    error.message
+                );
+
+
+            } finally {
+
+                generateQuizBtn.disabled =
+                    false;
+
+            }
+
+        }
+    );
+
+
+    // =========================
+    // Show Question
+    // =========================
+
+    function showQuestion() {
+
+        const question =
+            questions[currentQuestion];
+
+
+        if (!question) {
+
+            finishQuiz();
+
+            return;
+
+        }
+
+
+        questionNumber.textContent =
+            "Question " +
+            (currentQuestion + 1) +
+            " / " +
+            questions.length;
+
+
+        quizScore.textContent =
+            "Score: " +
+            score;
+
+
+        questionText.textContent =
+            question.question;
+
+
+        optionsContainer.innerHTML =
+            "";
+
+
+        nextQuestionBtn.style.display =
+            "none";
+
+
+        question.options.forEach(
+            function (option, index) {
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                button.type =
+                    "button";
+
+
+                button.className =
+                    "quiz-option";
+
+
+                button.textContent =
+                    option;
+
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        selectAnswer(
+                            index,
+                            button
+                        );
+
+                    }
+                );
+
+
+                optionsContainer.appendChild(
+                    button
+                );
+
+            }
+        );
+
+    }
+
+
+    // =========================
+    // Select Answer
+    // =========================
+/*
+    function selectAnswer(
+        selectedIndex,
+        selectedButton
+    ) {
+
+        const question =
+            questions[currentQuestion];
+            userAnswers[currentQuestion] =
+            selectedIndex;
+
+
+        const buttons =
+            optionsContainer.querySelectorAll(
+                ".quiz-option"
+            );
+
+
+        // Disable all options
+
+        buttons.forEach(
+            function (button) {
+
+                button.disabled =
+                    true;
+
+            }
+        );
+
+
+        // =========================
+        // Correct Answer
+        // =========================
+
+        if (
+            selectedIndex ===
+            question.answer
+        ) {
+
+            selectedButton.classList.add(
+                "correct"
+            );
+
+
+            score++;
+
+        }
+
+
+        // =========================
+        // Wrong Answer
+        // =========================
+
+        else {
+
+            selectedButton.classList.add(
+                "wrong"
+            );
+
+
+            buttons[
+                question.answer
+            ].classList.add(
+                "correct"
+            );
+
+        }
+*/
+
+
+
+function selectAnswer(
+    selectedIndex,
+    selectedButton
+) {
+
+    const question =
+        questions[currentQuestion];
+
+
+    // Save user's selected answer
+    question.user_answer =
+        selectedIndex;
+
+
+    const buttons =
+        optionsContainer.querySelectorAll(
+            ".quiz-option"
+        );
+
+
+    // Disable all options
+    buttons.forEach(
+        function (button) {
+
+            button.disabled =
+                true;
+
+        }
+    );
+
+
+    // =========================
+    // Correct Answer
+    // =========================
+
+    if (
+        selectedIndex ===
+        question.answer
+    ) {
+
+        selectedButton.classList.add(
+            "correct"
+        );
+
+        score++;
+
+    }
+
+
+    // =========================
+    // Wrong Answer
+    // =========================
+
+    else {
+
+        selectedButton.classList.add(
+            "wrong"
+        );
+
+
+        // Highlight correct answer
+        buttons[
+            question.answer
+        ].classList.add(
+            "correct"
+        );
+
+    }
+
+
+    quizScore.textContent =
+        "Score: " +
+        score;
+
+
+    nextQuestionBtn.style.display =
+        "block";
+
+}
+        quizScore.textContent =
+            "Score: " +
+            score;
+
+
+        nextQuestionBtn.style.display =
+            "block";
+
+    
+
+
+    // =========================
+    // Next Question
+    // =========================
+
+    nextQuestionBtn.addEventListener(
+        "click",
+        function () {
+
+            currentQuestion++;
+
+            showQuestion();
+
+        }
+    );
+
+
+    // =========================
+    // Finish Quiz
+    // =========================
+
+    function finishQuiz() {
+
+    quizArea.style.display =
+        "none";
+
+    quizResult.style.display =
+        "block";
+
+
+    const total =
+        questions.length;
+
+    const correct =
+        score;
+
+    const wrong =
+        total - correct;
+
+    const percent =
+        total > 0
+            ? Math.round(
+                (correct / total) * 100
+            )
+            : 0;
+
+
+    // =========================
+    // Final Score
+    // =========================
+
+    finalScore.textContent =
+        correct +
+        " / " +
+        total;
+
+
+    correctAnswers.textContent =
+        correct;
+
+
+    wrongAnswers.textContent =
+        wrong;
+
+
+    percentage.textContent =
+        percent +
+        "%";
+
+
+    // =========================
+    // Prepare Question History
+    // =========================
+
+    const questionHistory =
+        questions.map(
+            function(question, index) {
+
+                return {
+
+                    question:
+                        question.question,
+
+                    options:
+                        question.options,
+
+                    correct_answer:
+                        question.answer,
+
+                    user_answer:
+                        userAnswers[index] ?? null
+
+                };
+
+            }
+        );
+
+
+    // =========================
+    // Save Quiz
+    // =========================
+
+    fetch(
+        "/save-quiz",
+        {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+
+            body: JSON.stringify({
+
+                title: "AI Quiz",
+
+                score: score,
+
+                total_questions: questions.length,
+
+                correct_answers: score,
+
+                wrong_answers:
+                    questions.length - score,
+
+                percentage:
+                    questions.length > 0
+                    ? Math.round(
+                        (score / questions.length) * 100
+                    )
+                    : 0,
+
+                pdf_id: quizPdf.value,
+
+                question_data: questions
+
+            })
+
+        }
+    )
+
+    .then(
+        response =>
+            response.json()
+    )
+
+    .then(
+        function(data) {
+
+            console.log(
+                "Quiz saved:",
+                data
+            );
+
+        }
+    )
+
+    .catch(
+        function(error) {
+
+            console.error(
+                "Quiz save error:",
+                error
+            );
+
+        }
+    );
+
+}
+
+
+
+
+
+
+
+    // =========================
+    // Restart Quiz
+    // =========================
+
+    restartQuizBtn.addEventListener(
+        "click",
+        function () {
+
+            quizResult.style.display =
+                "none";
+
+
+            quizArea.style.display =
+                "none";
+
+
+            questions = [];
+
+            currentQuestion = 0;
+
+            score = 0;
+
+        }
+    );
+
+</script>
+
+{% endblock %}
